@@ -125,12 +125,12 @@ function emptyCells(squares) {
 }
 
 function minimax(squares,isComp){
-    let best;                               //best move for AI at given board position. when minimax is called.
+    let best_move;                               //best move for AI at given board position. when minimax is called.
 	if (isComp) {
-		best = [null, +1000];               //minimax called top play for AI.
+		best_move = [null, +1000];               //minimax called to play for AI.
 	}
 	else {
-		best = [null, -1000];              //minimax called top play for human.
+		best_move = [null, -1000];              //minimax called to play for human.
     }    	
 
 	emptyCells(squares).forEach(function (square) {    
@@ -139,7 +139,7 @@ function minimax(squares,isComp){
         let winner = calculateWinner(squares);
         if(winner){ 
             if( winner === (!isComp ? 'X' : 'O')){                  //if human is not winner, then AI is winner.
-                best = [square,+1000];                              //best move to play. i.e the intention is to block threat.
+                best_move = [square,+1000];                              //best move to play. i.e the intention is to block threat.
             }else{
                 return;
             }
@@ -147,24 +147,24 @@ function minimax(squares,isComp){
         else {  //if we get here, we can safely try this board position.
             squares[square] = (isComp ? 'X' : 'O');                             //Recursively try other future moves.       ***
             if( calculateWinner(squares) === (isComp ? 'X' : 'O')){
-                best = [square,+1000];                                      //this is an improvement, save it.
-            }else if( winner === (!isComp ? 'X' : 'O')){
-                best = [square,-1000];                  //otherwise return lowest value to indicate this is not a good move for AI.
+                best_move = [square, +1000];                                      //this is an improvement, save it.
+            }else if( calculateWinner(squares) === (!isComp ? 'X' : 'O')){
+                best_move = [square, -1000];                  //otherwise return lowest value to indicate this is not a good move for AI.
             }
 
-            let score = minimax(squares,isComp);      //calculate score value of the following (child) board position.
+            let test_move = minimax(squares,isComp);      //calculate score value of the following (child) board position.
                     
-            if (score[1] > best[1]){                   //follow node tree with value better or equal to current board position.
-                best = score;                    //this trims the game tree
+            if (test_move[1] > best_move[1]){                   //follow node tree with value better or equal to current board position.
+                best_move = test_move;                    //this trims the game tree
             }
         }
         squares[square] = null;     //Restore board position to unmake test move.
     });
 
-    if(best[0] == null){
+    if(best_move[0] == null){
         const empt = emptyCells(squares)
-        best[0] = empt[Math.floor(Math.random() * empt.length)];
+        best_move[0] = empt[Math.floor(Math.random() * empt.length)];
     }
 
-    return best;
+    return best_move;
 }//end of minimax

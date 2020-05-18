@@ -1,8 +1,65 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Tic Tac Toe (minimax algorithm)
 
-## Available Scripts
+This project is a tic tac toe game that uses minimax strategy to determine AI move.
+Minimax is a game tree search strategy in which at each move the AI tries to minimize the maximum value the human can achieve.
 
-In the project directory, you can run:
+The game UI was developed following Tutorial: Intro to React. which can be found at this <a href="https://reactjs.org/tutorial/tutorial.html">link</a>.
+
+To find the best move for AI, the algorithm must find the move that gives the human the worst board value. The algorithm creates a variable ``best_move`` to keep track of the possible move foun so far for the AI. Initially it is set to **null**. To ensure that it is replaced by a better move, when one is found. It's given a value of either +1000 or -1000 to indicate that the tree branch is either in favor for human or AI.
+```javascript
+let best_move;                               //best move for AI at given board position. when minimax is called.
+if (isComp) {
+    best_move = [null, +1000];
+}
+else {
+    best_move = [null, -1000];
+}
+```
+The algorithm start by checking if this board position is better for the human, this is not preferable for AI therefore play it is saved as ``best_move`` for AI to play to block a win.
+if human is not winner. The algorithm returns.
+
+```javascript
+squares[square] = (!isComp ? 'X' : 'O');
+let winner = calculateWinner(squares);
+if(winner){ 
+    if( winner === (!isComp ? 'X' : 'O')){
+        best_move = [square, +1000];                    
+    }else{
+        return;
+    }
+```
+Next the algorithm loops through all the moves the AI could make. It makes a test move and then recursively calls itself to find the best move the opponent could make after the AI makes that test move. At each recursion call the algorithm updates the ``best_move``, based on whether if the opponet wins or loses.
+
+```javascript
+if( calculateWinner(squares) === (isComp ? 'X' : 'O')){
+    best_move = [square, +1000];
+    }else if( calculateWinner(squares) === (!isComp ? 'X' : 'O')){
+        best_move = [square, -1000];
+    }
+```
+
+After the recursive call returns, the algorithm compares the best result the opponent could obtain with the value saved in ``best_move``. If the test value is higher, the algorithm updates the ``best_move``, so it knows that this move is preferable (for the AI).
+
+```javascript
+let test_move = minimax(squares,isComp);
+
+if (test_move[1] > best_move[1]){
+    best_move = test_move;
+}
+```
+
+In case where it is not clear whether the opponent wins or loses, the AI chooses a random move that is available.
+
+```javascript
+if(best_move[0] == null){
+    const empt = emptyCells(squares)
+    best_move[0] = empt[Math.floor(Math.random() * empt.length)];
+}
+```
+
+## Scripts
+
+To run the project use:
 
 ### `npm start`
 
@@ -11,58 +68,3 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
